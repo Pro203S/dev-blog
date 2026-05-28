@@ -1,4 +1,6 @@
 ---
+import { Font } from "astro:assets";
+import "../../styles/global.css";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -22,6 +24,7 @@ const { Content } = await render(post);
 
 <html lang="ko">
     <head>
+        <Font cssVariable="--font-family" />
         <meta charset="UTF-8">
     </head>
     <body>

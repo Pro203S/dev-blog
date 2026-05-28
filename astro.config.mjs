@@ -2,9 +2,19 @@
 
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [mdx(), sitemap()],
+	"integrations": [mdx(), sitemap()],
+	"fonts": [{
+		"name": "Pretendard",
+		"provider": fontProviders.local(),
+		"cssVariable": "--font-family",
+		"options": {
+			"variants": [{
+				"src": ["./public/PretendardVariable.ttf"]
+			}]
+		}
+	}]
 });
