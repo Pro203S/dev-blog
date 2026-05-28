@@ -10,7 +10,7 @@ export default defineConfig({
 	"fonts": [{
 		"name": "Pretendard",
 		"provider": fontProviders.local(),
-		"cssVariable": "--font-family",
+		"cssVariable": "--pretendard",
 		"options": {
 			"variants": [{
 				"src": ["./public/PretendardVariable.ttf"]
