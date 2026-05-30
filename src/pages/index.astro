@@ -35,7 +35,7 @@ const cutString = (s: string) => s.length > 50 ? (s.slice(0, 47) + "...") : s;
         <div class={css.container}>
             <Header />
             <div class={css.blogs}>
-                {posts.map(v => <a class={css.blog} href={v.data.id}>
+                {posts.map(v => <a class={css.blog} href={`/posts/${v.data.id}`}>
                     <div class={css.titleContainer}>
                         <span class={css.title}>{v.data.title}</span>
                         <span class={css.date}>{formatDate(v.data.publishDate)}</span>

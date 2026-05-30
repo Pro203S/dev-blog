@@ -1,9 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import Header from "../components/Header.astro";
-import HeadTag from "./../components/HeadTag.astro";
-import "./../styles/global.css";
-import css from "./../styles/search.module.css";
+import HeadTag from "../components/HeadTag.astro";
+import "../styles/global.css";
+import css from "../styles/search.module.css";
 
 const posts = (await getCollection("blog")).sort(
     (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime(),
@@ -21,35 +21,112 @@ const normalizeSearch = (value: string) =>
     value.toLowerCase().replace(/\s+/g, " ").trim();
 
 const searchPosts = posts.map((post) => ({
-    "id": post.id,
-    "href": `/posts/${post.id}`,
-    "title": post.data.title,
-    "description": post.data.description,
-    "publishDate": formatDate(post.data.publishDate),
-    "searchText": normalizeSearch(
+    id: post.id,
+    href: `/posts/${post.id}`,
+    title: post.data.title,
+    description: post.data.description,
+    publishDate: formatDate(post.data.publishDate),
+    searchText: normalizeSearch(
         [post.data.title, post.data.description, post.body, post.id].join(" "),
     ),
 }));
+
+const cutString = (s: string) => (s.length > 50 ? s.slice(0, 47) + "..." : s);
 ---
 
 <html lang="ko">
-    <head>
-        <HeadTag
-            route="/search"
-            title="검색 - Pro203S 블로그"
-            description="블로그 글을 검색할 수 있는 페이지"
-        />
-    </head>
+    <HeadTag
+        route="/search"
+        title="검색 - Pro203S 블로그"
+        description="블로그 글을 검색할 수 있는 페이지"
+    />
     <body>
         <div class={css.container}>
             <Header />
-            <div class={css.screen}>
+            <main class={css.screen}>
+                <label for="searchBox">검색어</label>
+                <input
+                    id="searchBox"
+                    type="search"
+                    name="q"
+                    placeholder="제목, 설명, 본문으로 검색"
+                    autocomplete="off"
+                />
 
-            </div>
+                <p id="resultCount">전체 {searchPosts.length}개 글</p>
+                <p id="emptyMessage" hidden>검색 결과가 없습니다.</p>
+
+                <div id="postList">
+                    {
+                        searchPosts.map((v) => (
+                            <a class={css.blog} href={`/posts/${v.id}`} data-search={v.searchText}>
+                                <div class={css.titleContainer}>
+                                    <span class={css.title}>{v.title}</span>
+                                    <span class={css.date}>
+                                        {v.publishDate}
+                                    </span>
+                                </div>
+                                <span class={css.description}>
+                                    {cutString(v.description)}
+                                </span>
+                            </a>
+                        ))
+                    }
+                </div>
+            </main>
         </div>
 
-        <script>
-            
+        <script is:inline>
+            const searchBox = document.querySelector("#searchBox");
+            const resultCount = document.querySelector("#resultCount");
+            const emptyMessage = document.querySelector("#emptyMessage");
+            const posts = Array.from(document.querySelectorAll("#postList a"));
+
+            const normalize = (value) =>
+                value.toLowerCase().replace(/\s+/g, " ").trim();
+
+            const updateResults = (rawQuery) => {
+                const query = normalize(rawQuery);
+                let visibleCount = 0;
+
+                posts.forEach((post) => {
+                    const searchText = post.dataset.search ?? "";
+                    const isVisible =
+                        query === "" || searchText.includes(query);
+
+                    post.hidden = !isVisible;
+
+                    if (isVisible) {
+                        visibleCount += 1;
+                    }
+                });
+
+                resultCount.textContent =
+                    query === ""
+                        ? `전체 ${posts.length}개 글`
+                        : `"${rawQuery}" 검색 결과 ${visibleCount}개`;
+
+                emptyMessage.hidden = visibleCount !== 0;
+            };
+
+            const initialQuery =
+                new URLSearchParams(window.location.search).get("q") ?? "";
+            searchBox.value = initialQuery;
+            updateResults(initialQuery);
+
+            searchBox.addEventListener("input", (event) => {
+                const query = event.currentTarget.value;
+                const url = new URL(window.location.href);
+
+                if (query.trim() === "") {
+                    url.searchParams.delete("q");
+                } else {
+                    url.searchParams.set("q", query);
+                }
+
+                history.replaceState(null, "", `${url.pathname}${url.search}`);
+                updateResults(query);
+            });
         </script>
     </body>
 </html>
