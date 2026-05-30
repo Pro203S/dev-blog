@@ -1,0 +1,18 @@
+.container {
+    display: flex;
+    flex-direction: column;
+
+    max-width: 800px;
+    width: 100%;
+    padding: 0 15px;
+    height: 100dvh;
+}
+
+.screen {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 18px;
+    overflow-y: auto;
+    padding-bottom: 24px;
+}

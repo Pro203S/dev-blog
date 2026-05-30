@@ -40,7 +40,7 @@ const cutString = (s: string) => s.length > 50 ? (s.slice(0, 47) + "...") : s;
                         <span class={css.title}>{v.data.title}</span>
                         <span class={css.date}>{formatDate(v.data.publishDate)}</span>
                     </div>
-                    <span class={css.description}>{v.data.description}</span>
+                    <span class={css.description}>{cutString(v.data.description)}</span>
                 </a>)}
             </div>
         </div>
