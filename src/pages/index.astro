@@ -1,17 +1,48 @@
 ---
+import { getCollection } from "astro:content";
 import Header from "../components/Header.astro";
 import HeadTag from "./../components/HeadTag.astro";
 import "./../styles/global.css";
 import css from "./../styles/index.module.css";
+
+const posts = (await getCollection("blog")).sort(
+    (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime(),
+);
+
+const formatDate = (d: Date) => {
+    const year = String(d.getFullYear());
+    const month = d.getMonth() + 1;
+    const date = d.getDate();
+
+    const monthStr = month > 10 ? `${month}` : `0${month}`;
+    const dateStr = date > 10 ? `${date}` : `0${date}`;
+
+    return `${year}/${monthStr}/${dateStr}`;
+}
+
+const cutString = (s: string) => s.length > 50 ? (s.slice(0, 47) + "...") : s;
 ---
 
 <html lang="ko">
     <head>
-        <HeadTag href="/" title="Pro203S 블로그" description="Pro203S의 개발 블로그" />
+        <HeadTag
+            route="/"
+            title="Pro203S 블로그"
+            description="Pro203S의 개발 블로그"
+        />
     </head>
     <body>
         <div class={css.container}>
             <Header />
+            <div class={css.blogs}>
+                {posts.map(v => <a class={css.blog} href={v.data.id}>
+                    <div class={css.titleContainer}>
+                        <span class={css.title}>{v.data.title}</span>
+                        <span class={css.date}>{formatDate(v.data.publishDate)}</span>
+                    </div>
+                    <span class={css.description}>{v.data.description}</span>
+                </a>)}
+            </div>
         </div>
     </body>
 </html>

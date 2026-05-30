@@ -7,3 +7,51 @@
     padding: 0 15px;
     height: 100dvh;
 }
+
+.blogs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.blog {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border: #000 solid 0px;
+    border-radius: 15px;
+    background-color: #232323;
+    cursor: pointer;
+    text-decoration: none;
+    will-change: transform;
+    transition: .25s;
+}
+
+.blog:hover {
+    transform: scale(.98);
+}
+
+.blog .titleContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.blog .title {
+    color: #fff;
+    font-size: 1.47rem;
+    font-weight: 700;
+}
+
+.blog .date {
+    color: #686868;
+    font-size: 1rem;
+}
+
+.blog .description {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+

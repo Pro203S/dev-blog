@@ -1,4 +1,5 @@
 ---
+id: hello
 title: Hello Astro
 description: Hello
 publishDate: 2025-05-29
