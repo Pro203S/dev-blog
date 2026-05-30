@@ -1,7 +1,7 @@
 ---
 import "../../styles/global.css";
 import { getCollection, render } from "astro:content";
-import HeadTag from "../../components/headTag.astro";
+import HeadTag from "../../components/HeadTag.astro";
 
 export async function getStaticPaths() {
     const posts = await getCollection("blog");
