@@ -60,10 +60,6 @@ body {
     justify-content: center;
     align-items: center;
     animation: 11.7s ease-in-out infinite bgani;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
 }
 
 *::selection {
