@@ -65,3 +65,8 @@ body {
     flex-direction: row;
     justify-content: center;
 }
+
+*::selection {
+    background-color: #fff;
+    color: #000;
+}

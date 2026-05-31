@@ -44,17 +44,16 @@ const cutString = (s: string) => (s.length > 50 ? s.slice(0, 47) + "..." : s);
         <div class={css.container}>
             <Header />
             <main class={css.screen}>
-                <label for="searchBox">검색어</label>
                 <input
                     id="searchBox"
-                    type="search"
+                    class={css.searchBox}
                     name="q"
                     placeholder="제목, 설명, 본문으로 검색"
                     autocomplete="off"
                 />
 
-                <p id="resultCount">전체 {searchPosts.length}개 글</p>
-                <p id="emptyMessage" hidden>검색 결과가 없습니다.</p>
+                <span id="resultCount">전체 {searchPosts.length}개 글</span>
+                <span id="emptyMessage" hidden>검색 결과가 없습니다.</span>
 
                 <div id="postList">
                     {

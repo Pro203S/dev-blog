@@ -16,3 +16,14 @@
     overflow-y: auto;
     padding-bottom: 24px;
 }
+
+.searchBox {
+    padding: 7.5px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: #303030 solid 2px;
+    outline: none;
+    background-color: #303030;
+    color: #fff;
+}
+
