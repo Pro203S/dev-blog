@@ -9,39 +9,45 @@ const posts = (await getCollection("blog")).sort(
     (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime(),
 );
 
-const formatDate = (d: Date) => {
-    const year = String(d.getFullYear());
-    const month = d.getMonth() + 1;
-    const date = d.getDate();
+const formatDate = (date: Date) => {
+    const year = String(date.getFullYear());
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-    const monthStr = month > 10 ? `${month}` : `0${month}`;
-    const dateStr = date > 10 ? `${date}` : `0${date}`;
+    return `${year}/${month}/${day}`;
+};
 
-    return `${year}/${monthStr}/${dateStr}`;
-}
-
-const cutString = (s: string) => s.length > 50 ? (s.slice(0, 47) + "...") : s;
+const cutString = (value: string) =>
+    value.length > 50 ? value.slice(0, 47) + "..." : value;
 ---
 
 <html lang="ko">
-    <head>
-        <HeadTag
-            route="/"
-            title="Pro203S 블로그"
-            description="Pro203S의 개발 블로그"
-        />
-    </head>
+    <HeadTag
+        route="/"
+        title="Pro203S 블로그"
+        description="Pro203S의 개발 블로그"
+    />
     <body>
-        <div class={css.container}>
+        <div class={css.page}>
             <Header />
-            <div class={css.blogs}>
-                {posts.map(v => <a class={css.blog} href={`/posts/${v.data.id}`}>
-                    <div class={css.titleContainer}>
-                        <span class={css.title}>{v.data.title}</span>
-                        <span class={css.date}>{formatDate(v.data.publishDate)}</span>
-                    </div>
-                    <span class={css.description}>{cutString(v.data.description)}</span>
-                </a>)}
+            <div class={css.container}>
+                <div class={css.blogs}>
+                    {
+                        posts.map((post) => (
+                            <a class={css.blog} href={`/posts/${post.id}`}>
+                                <div class={css.titleContainer}>
+                                    <span class={css.title}>{post.data.title}</span>
+                                    <span class={css.date}>
+                                        {formatDate(post.data.publishDate)}
+                                    </span>
+                                </div>
+                                <span class={css.description}>
+                                    {cutString(post.data.description)}
+                                </span>
+                            </a>
+                        ))
+                    }
+                </div>
             </div>
         </div>
     </body>
