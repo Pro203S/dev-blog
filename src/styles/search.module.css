@@ -23,16 +23,17 @@
 
 .searchBox {
     width: 100%;
-    max-width: 770px;
+    max-width: 750px;
     min-height: 0;
     margin: auto;
+    margin-bottom: 15px;
     font-size: 1.01rem;
     border: #000 solid 0px;
     border-radius: 13px;
     background-color: #232323;
     outline: none;
     color: #fff;
-    padding: 7px;
+    padding: 12px;
 }
 
 .blogs {
