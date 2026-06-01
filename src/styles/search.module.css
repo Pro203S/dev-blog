@@ -21,6 +21,20 @@
     margin: 0 auto;
 }
 
+.searchBox {
+    width: 100%;
+    max-width: 770px;
+    min-height: 0;
+    margin: auto;
+    font-size: 1.01rem;
+    border: #000 solid 0px;
+    border-radius: 13px;
+    background-color: #232323;
+    outline: none;
+    color: #fff;
+    padding: 7px;
+}
+
 .blogs {
     margin-bottom: 0;
 }

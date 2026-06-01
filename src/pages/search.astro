@@ -30,13 +30,16 @@ const cutString = (value: string) =>
     <body>
         <Header />
         <div class={css.page}>
+            <input type="text" id="searchBox" class={css.searchBox} placeholder="포스트 제목으로 검색하기" />
             <div class={css.container}>
                 <div class={css.blogs}>
                     {
                         posts.map((post) => (
                             <a class={css.blog} href={`/posts/${post.id}`}>
                                 <div class={css.titleContainer}>
-                                    <span class={css.title}>{post.data.title}</span>
+                                    <span class={css.title}>
+                                        {post.data.title}
+                                    </span>
                                     <span class={css.date}>
                                         {formatDate(post.data.publishDate)}
                                     </span>
