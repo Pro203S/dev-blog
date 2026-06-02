@@ -1,0 +1,73 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Header from "../components/Header.astro";
+import HeadTag from "./../components/HeadTag.astro";
+import "./../styles/global.css";
+import css from "./../styles/archive.module.css";
+
+type BlogData = CollectionEntry<"blog">[];
+
+const posts: Record<string, BlogData> = (await getCollection("blog"))
+    .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+    .reduce<Record<string, BlogData>>((acc, post) => {
+        const year = String(post.data.publishDate.getFullYear());
+
+        acc[year] ??= [];
+        acc[year].push(post);
+
+        return acc;
+    }, {});
+
+const formatDate = (date: Date) => {
+    const year = String(date.getFullYear());
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}/${month}/${day}`;
+};
+
+const cutString = (value: string) =>
+    value.length > 50 ? value.slice(0, 47) + "..." : value;
+---
+
+<html lang="ko">
+    <HeadTag
+        route="/"
+        title="Pro203S 블로그"
+        description="Pro203S의 개발 블로그"
+    />
+    <body>
+        <Header />
+        <div class={css.page}>
+            <div class={css.container}>
+                <div class={css.blogs}>
+                    {
+                        Object.entries(posts).map(([year, yearPosts]) => (
+                            <>
+                                <h2 class={css.year}>{year}</h2>
+                                {yearPosts.map((post) => (
+                                    <a class={css.blog} href={`/posts/${post.id}`}>
+                                        <div class={css.titleContainer}>
+                                            <span class={css.title}>
+                                                {post.data.title}
+                                            </span>
+                                            <span class={css.date}>
+                                                {formatDate(post.data.publishDate)}
+                                            </span>
+                                        </div>
+                                        <span class={css.tags}>
+                                            태그: {post.data.tags.join(", ")}
+                                        </span>
+                                        <span class={css.description}>
+                                            {cutString(post.data.description)}
+                                        </span>
+                                    </a>
+                                ))}
+                            </>
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
