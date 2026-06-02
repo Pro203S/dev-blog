@@ -21,7 +21,8 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const tableOfContents = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 ---
 
 <html lang="ko">
@@ -32,8 +33,105 @@ const { Content } = await render(post);
         <Header />
         <div class={css.page}>
             <div class={css.container}>
+                {
+                    tableOfContents.length > 0 && (
+                        <nav class={css.tableOfContents} aria-label="목차">
+                            <span class={css.tableOfContentsTitle}>목차</span>
+                            <ul class={css.tableOfContentsList}>
+                                {tableOfContents.map((heading) => (
+                                    <li data-depth={heading.depth}>
+                                        <a href={`#${heading.slug}`}>
+                                            {heading.text}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    )
+                }
                 <Content />
+                <a class={css.homeButton} href="/">
+                    메인으로 돌아가기
+                </a>
             </div>
         </div>
     </body>
+    <script is:inline>
+        const copyCode = async (value) => {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(value);
+                return;
+            }
+
+            const textarea = document.createElement("textarea");
+            textarea.value = value;
+            textarea.setAttribute("readonly", "");
+            textarea.style.position = "absolute";
+            textarea.style.left = "-9999px";
+
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            textarea.remove();
+        };
+
+        const getCodeText = (codeElement) => {
+            const lines = Array.from(codeElement.querySelectorAll(".line"));
+
+            if (lines.length === 0) {
+                return codeElement.textContent?.trim() ?? "";
+            }
+
+            return lines
+                .map((line) => line.textContent ?? "")
+                .join("\n")
+                .replace(/\n$/, "");
+        };
+
+        const codeBlocks = Array.from(
+            document.querySelectorAll("pre[data-language]"),
+        );
+
+        for (const codeBlock of codeBlocks) {
+            const codeElement = codeBlock.querySelector("code");
+
+            if (!codeElement) {
+                continue;
+            }
+
+            const codeMeta = document.createElement("div");
+            const languageLabel = document.createElement("span");
+            const copyButton = document.createElement("button");
+            const language = codeBlock.getAttribute("data-language") ?? "unknown";
+
+            codeMeta.setAttribute("data-code-meta", "");
+            languageLabel.setAttribute("data-code-language", "");
+            languageLabel.textContent = language;
+            copyButton.type = "button";
+            copyButton.textContent = "복사";
+            copyButton.setAttribute("data-copy-button", "");
+
+            copyButton.addEventListener("click", async () => {
+                try {
+                    await copyCode(getCodeText(codeElement));
+                    copyButton.textContent = "복사됨";
+                    copyButton.setAttribute("data-copied", "true");
+
+                    window.setTimeout(() => {
+                        copyButton.textContent = "복사";
+                        copyButton.removeAttribute("data-copied");
+                    }, 1800);
+                } catch {
+                    copyButton.textContent = "실패";
+
+                    window.setTimeout(() => {
+                        copyButton.textContent = "복사";
+                    }, 1800);
+                }
+            });
+
+            codeMeta.append(languageLabel, copyButton);
+            codeBlock.prepend(codeMeta);
+        }
+    </script>
 </html>
