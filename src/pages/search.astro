@@ -32,7 +32,7 @@ const cutString = (value: string) =>
         <div class={css.page}>
             <input type="text" id="searchBox" class={css.searchBox} placeholder="포스트 제목으로 검색하기" />
             <div class={css.container}>
-                <div class={css.blogs}>
+                <div class={css.blogs} id="post">
                     {
                         posts.map((post) => (
                             <a class={css.blog} href={`/posts/${post.id}`}>
@@ -54,4 +54,14 @@ const cutString = (value: string) =>
             </div>
         </div>
     </body>
+    <script is:inline>
+        const searchBox = document.querySelector("#searchBox");
+        const posts = document.querySelector("#posts");
+        if (!searchBox) {
+            window.location.reload();
+            return;
+        }
+
+
+    </script>
 </html>
