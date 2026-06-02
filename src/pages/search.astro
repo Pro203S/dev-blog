@@ -9,6 +9,8 @@ const posts = (await getCollection("blog")).sort(
     (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime(),
 );
 
+const postTags = [...new Set(posts.map((post) => post.data.tags).flat())];
+
 const formatDate = (date: Date) => {
     const year = String(date.getFullYear());
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -30,12 +32,53 @@ const cutString = (value: string) =>
     <body>
         <Header />
         <div class={css.page}>
-            <input type="text" id="searchBox" class={css.searchBox} placeholder="포스트 제목으로 검색하기" />
+            <div class={css.searchContainer}>
+                <input
+                    type="text"
+                    id="searchBox"
+                    class={css.searchBox}
+                    placeholder="포스트 제목으로 검색하기"
+                />
+                <div class={css.dropdown} id="tagDropdown">
+                    <button
+                        type="button"
+                        id="tagDropdownToggle"
+                        class={css.dropdownToggle}
+                        aria-expanded="false"
+                        aria-controls="tagDropdownMenu"
+                    >
+                        태그
+                    </button>
+                    <div
+                        class={css.dropdownMenu}
+                        id="tagDropdownMenu"
+                        hidden
+                    >
+                        {
+                            postTags.map((tag) => (
+                                <button
+                                    type="button"
+                                    class={css.dropdownItem}
+                                    data-tag={tag}
+                                    aria-pressed="false"
+                                >
+                                    {tag}
+                                </button>
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
             <div class={css.container}>
                 <div class={css.blogs} id="post">
                     {
                         posts.map((post) => (
-                            <a class={css.blog} href={`/posts/${post.id}`}>
+                            <a
+                                class={css.blog}
+                                href={`/posts/${post.id}`}
+                                data-name={post.data.title}
+                                data-tags={post.data.tags.join("|")}
+                            >
                                 <div class={css.titleContainer}>
                                     <span class={css.title}>
                                         {post.data.title}
@@ -44,6 +87,9 @@ const cutString = (value: string) =>
                                         {formatDate(post.data.publishDate)}
                                     </span>
                                 </div>
+                                <span class={css.tags}>
+                                    {post.data.tags.join(", ")}
+                                </span>
                                 <span class={css.description}>
                                     {cutString(post.data.description)}
                                 </span>
@@ -54,14 +100,132 @@ const cutString = (value: string) =>
             </div>
         </div>
     </body>
-    <script is:inline>
+    <script is:inline defer>
         const searchBox = document.querySelector("#searchBox");
-        const posts = document.querySelector("#posts");
-        if (!searchBox) {
-            window.location.reload();
-            return;
-        }
+        const posts = Array.from(document.querySelectorAll("#post a"));
+        const tagDropdown = document.querySelector("#tagDropdown");
+        const tagDropdownToggle = document.querySelector("#tagDropdownToggle");
+        const tagDropdownMenu = document.querySelector("#tagDropdownMenu");
+        const postTagButtons = Array.from(
+            document.querySelectorAll("[data-tag]"),
+        );
 
+        document.addEventListener("DOMContentLoaded", () => {
+            if (!searchBox || !tagDropdown || !tagDropdownToggle || !tagDropdownMenu) {
+                return;
+            }
 
+            const selectedTags = new Set();
+
+            const closeDropdown = () => {
+                tagDropdownToggle.setAttribute("aria-expanded", "false");
+                tagDropdownMenu.hidden = true;
+            };
+
+            const toggleDropdown = () => {
+                const isExpanded =
+                    tagDropdownToggle.getAttribute("aria-expanded") === "true";
+
+                tagDropdownToggle.setAttribute(
+                    "aria-expanded",
+                    String(!isExpanded),
+                );
+                tagDropdownMenu.hidden = isExpanded;
+            };
+
+            const syncDropdownToggleLabel = () => {
+                tagDropdownToggle.setAttribute(
+                    "data-has-selection",
+                    String(selectedTags.size > 0),
+                );
+                tagDropdownToggle.textContent =
+                    selectedTags.size > 0
+                        ? `태그 (${selectedTags.size})`
+                        : "태그";
+            };
+
+            const syncTagButtonStates = () => {
+                for (const postTagButton of postTagButtons) {
+                    const tag = postTagButton.getAttribute("data-tag");
+
+                    if (!tag) {
+                        continue;
+                    }
+
+                    postTagButton.setAttribute(
+                        "aria-pressed",
+                        String(selectedTags.has(tag)),
+                    );
+                }
+            };
+
+            const applyFilters = () => {
+                const query = searchBox.value;
+
+                for (const post of posts) {
+                    const postName = post.getAttribute("data-name") ?? "";
+                    const postTags =
+                        post.getAttribute("data-tags")?.split("|") ?? [];
+                    const matchesTitle = postName.includes(query);
+                    const matchesTags =
+                        selectedTags.size === 0 ||
+                        Array.from(selectedTags).every((tag) =>
+                            postTags.includes(tag),
+                        );
+                    const shouldShow =
+                        selectedTags.size > 0 ? matchesTags : matchesTitle;
+
+                    if (!shouldShow) {
+                        post.setAttribute("style", "display: none");
+                    } else {
+                        post.removeAttribute("style");
+                    }
+                }
+            };
+
+            searchBox.addEventListener("input", applyFilters);
+
+            tagDropdownToggle.addEventListener("click", toggleDropdown);
+
+            for (const postTagButton of postTagButtons) {
+                postTagButton.addEventListener("click", (ev) => {
+                    const selectedTag = ev.currentTarget?.getAttribute(
+                        "data-tag",
+                    );
+
+                    if (!selectedTag) {
+                        return;
+                    }
+
+                    if (selectedTags.has(selectedTag)) {
+                        selectedTags.delete(selectedTag);
+                    } else {
+                        selectedTags.add(selectedTag);
+                    }
+
+                    syncDropdownToggleLabel();
+                    syncTagButtonStates();
+                    applyFilters();
+                });
+            }
+
+            document.addEventListener("click", (ev) => {
+                if (!(ev.target instanceof Node) || tagDropdown.contains(ev.target)) {
+                    return;
+                }
+
+                closeDropdown();
+            });
+
+            document.addEventListener("keydown", (ev) => {
+                if (ev.key === "Escape") {
+                    closeDropdown();
+                }
+            });
+
+            syncDropdownToggleLabel();
+            syncTagButtonStates();
+            applyFilters();
+        });
     </script>
 </html>
