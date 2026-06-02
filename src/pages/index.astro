@@ -41,6 +41,9 @@ const cutString = (value: string) =>
                                         {formatDate(post.data.publishDate)}
                                     </span>
                                 </div>
+                                <span class={css.tags}>
+                                    태그: {post.data.tags.join(", ")}
+                                </span>
                                 <span class={css.description}>
                                     {cutString(post.data.description)}
                                 </span>

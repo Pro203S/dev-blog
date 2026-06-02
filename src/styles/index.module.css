@@ -26,7 +26,8 @@
 }
 
 .blog {
-    display: block;
+    display: flex;
+    flex-direction: column;
     padding: 15px;
     border: #000 solid 0px;
     border-radius: 15px;
@@ -66,6 +67,13 @@
 .blog .date {
     color: #686868;
     font-size: 1rem;
+}
+
+.blog .tags {
+    color: #bebebe;
+    font-size: 1.1rem;
+    font-weight: 300;
+    margin-bottom: 5px;
 }
 
 .blog .description {
