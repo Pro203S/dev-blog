@@ -71,6 +71,11 @@ pre[data-language] {
     padding: 0;
 }
 
+code,
+code * {
+    font-family: "Cascadia Code", "Cascadia Mono", Consolas, "Courier New", monospace;
+}
+
 code * {
     user-select: text;
 }
@@ -135,13 +140,18 @@ h3 {
 
 p {
     color: #e7e7e7;
-    overflow: hidden;
+    line-height: 1.7;
+    overflow: visible;
 }
 
-p code {
+p code,
+li code {
     border-radius: 5px;
-    padding: 3px;
+    padding: .12em .35em;
     background-color: #24292e;
+    line-height: inherit;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
 }
 
 a {
@@ -177,11 +187,75 @@ ul li {
     overflow: visible;
 }
 
+.postNavigation {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 12px;
+    margin-top: 36px;
+    overflow: visible;
+}
+
+.postNavigationLink {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding: 16px;
+    border-radius: 15px;
+    background-color: #232323;
+    color: #fff;
+    text-decoration: none;
+    touch-action: pan-y;
+    transition: background-color .2s ease, transform .2s ease;
+}
+
+.postNavigationLink[data-direction="next"] {
+    align-items: flex-end;
+    text-align: right;
+}
+
+.postNavigationLink:hover {
+    background-color: #303030;
+    transform: translateY(-2px);
+}
+
+.postNavigationLink:active {
+    transform: translateY(0) scale(.99);
+}
+
+.postNavigationLink:focus-visible {
+    outline: 2px solid #4493f8;
+    outline-offset: 3px;
+}
+
+.postNavigationLink:visited {
+    color: #fff;
+}
+
+.postNavigationLabel,
+.postNavigationTitle {
+    overflow: visible;
+}
+
+.postNavigationLabel {
+    color: #adadad;
+    font-size: .92rem;
+    font-weight: 500;
+}
+
+.postNavigationTitle {
+    color: #fff;
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
 .homeButton {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 28px;
+    margin-top: 16px;
     padding: 12px 18px;
     border-radius: 999px;
     background-color: #232323;
@@ -200,4 +274,9 @@ ul li {
 
 .homeButton:visited {
     color: #fff;
+}
+
+.homeButton:focus-visible {
+    outline: 2px solid #4493f8;
+    outline-offset: 3px;
 }

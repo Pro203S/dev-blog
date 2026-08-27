@@ -6,20 +6,26 @@ import Header from "../../components/Header.astro";
 import css from "./../../styles/post.module.css";
 
 export async function getStaticPaths() {
-    const posts = await getCollection("blog");
+    const posts = (await getCollection("blog")).sort(
+        (a, b) =>
+            a.data.publishDate.getTime() - b.data.publishDate.getTime() ||
+            a.id.localeCompare(b.id),
+    );
 
-    return posts.map((post) => ({
+    return posts.map((post, index) => ({
         params: {
             slug: post.id,
         },
 
         props: {
             post,
+            previousPost: posts[index - 1],
+            nextPost: posts[index + 1],
         },
     }));
 }
 
-const { post } = Astro.props;
+const { post, previousPost, nextPost } = Astro.props;
 
 const { Content, headings } = await render(post);
 const tableOfContents = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
@@ -50,6 +56,42 @@ const tableOfContents = headings.filter((heading) => heading.depth === 2 || head
                     )
                 }
                 <Content />
+                {
+                    (previousPost || nextPost) && (
+                        <nav class={css.postNavigation} aria-label="다른 글">
+                            {previousPost && (
+                                <a
+                                    class={css.postNavigationLink}
+                                    data-direction="previous"
+                                    href={`/posts/${previousPost.id}`}
+                                    rel="prev"
+                                >
+                                    <span class={css.postNavigationLabel}>
+                                        이전 글
+                                    </span>
+                                    <span class={css.postNavigationTitle}>
+                                        {previousPost.data.title}
+                                    </span>
+                                </a>
+                            )}
+                            {nextPost && (
+                                <a
+                                    class={css.postNavigationLink}
+                                    data-direction="next"
+                                    href={`/posts/${nextPost.id}`}
+                                    rel="next"
+                                >
+                                    <span class={css.postNavigationLabel}>
+                                        다음 글
+                                    </span>
+                                    <span class={css.postNavigationTitle}>
+                                        {nextPost.data.title}
+                                    </span>
+                                </a>
+                            )}
+                        </nav>
+                    )
+                }
                 <a class={css.homeButton} href="/">
                     메인으로 돌아가기
                 </a>
