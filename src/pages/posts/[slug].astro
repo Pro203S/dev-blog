@@ -32,9 +32,11 @@ const tableOfContents = headings.filter((heading) => heading.depth === 2 || head
 ---
 
 <html lang="ko">
-    <head>
-        <HeadTag title={`${post.data.title} - Pro203S 블로그`} />
-    </head>
+    <HeadTag
+        route={`/posts/${post.id}`}
+        title={`${post.data.title} - Pro203S 블로그`}
+        description={post.data.description}
+    />
     <body>
         <Header />
         <div class={css.page}>
