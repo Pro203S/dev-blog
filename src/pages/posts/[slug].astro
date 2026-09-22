@@ -57,7 +57,9 @@ const tableOfContents = headings.filter((heading) => heading.depth === 2 || head
                         </nav>
                     )
                 }
-                <Content />
+                <article class={css.markdown}>
+                    <Content />
+                </article>
                 {
                     (previousPost || nextPost) && (
                         <nav class={css.postNavigation} aria-label="다른 글">
