@@ -71,11 +71,6 @@ pre[data-language] {
     padding: 0;
 }
 
-code,
-code * {
-    font-family: "Cascadia Code", "Cascadia Mono", Consolas, "Courier New", monospace;
-}
-
 code * {
     user-select: text;
 }

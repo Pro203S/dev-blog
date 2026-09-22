@@ -1,3 +1,9 @@
+@font-face {
+    font-family: "Cascadia Code";
+    src: url("/CascadiaCode.ttf") format("truetype");
+    font-display: swap;
+}
+
 * {
     user-select: none;
     touch-action: none;
@@ -5,6 +11,14 @@
     overflow-x: hidden;
 
     font-family: var(--pretendard)
+}
+
+pre,
+pre *,
+code,
+code * {
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+    font-feature-settings: "calt" 0;
 }
 
 @keyframes bgani {
